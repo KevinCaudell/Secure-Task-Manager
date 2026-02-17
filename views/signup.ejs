@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign Up — One Task at a Time</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <main class="main-content-signup-login">
+        <div class="back-rectangle">
+            <div class="box">
+                <div class="left">
+                    <h1>Let's Start Your New Journey</h1>
+                    <p>Sign up to begin your journey to complete all your tasks!
+                        If you haven't already; create an account to manage your
+                        tasks and begin tracking your progress!
+                    </p>
+                    <div class="login-signup">
+                        <a href="/login">Already have an account? Login!</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="box">
+                <div class="right">
+                    <h1>Create an Account</h1>
+
+                    <form action="/signup" method="post">
+                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="password" name="password" placeholder="Password" required>
+                        <input type="password" name="confirm_password" placeholder="Confirm Password" required><br>
+                        <button type="submit">Sign Up</button>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+</body>
