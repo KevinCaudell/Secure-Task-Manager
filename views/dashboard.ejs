@@ -1,0 +1,55 @@
+<section class="dashboard-summary">
+  <div class="summary-card">
+    <h2>Total Tasks</h2>
+    <p><%= totalTasks %></p>
+  </div>
+  
+  <div class="summary-card completed">
+    <h2>Completed</h2>
+    <p><%= completedTasks %></p>
+  </div>
+  
+  <div class="summary-card pending">
+    <h2>Pending</h2>
+    <p><%= pendingTasks %></p>
+  </div>
+  
+  <div class="summary-card overdue">
+    <h2>Overdue</h2>
+    <p><%= overdueTasks %></p>
+  </div>
+</section>
+
+<section class="upcoming-tasks">
+    <h2>Upcoming Tasks</h2>
+
+    <ul>
+        <% tasks.forEach(task => { if(!task.completed) { %>
+            <li>
+                <strong><%= task.title %></strong>
+                — Due: <%= task.dueDate %>
+            </li>
+        <% }}); %>
+    </ul>
+</section>
+
+<section class="quick-actions">
+    <h2>Quick Actions</h2>
+
+    <div class="action-buttons">
+        <a href="/tasks" class="action-btn">View Tasks</a>
+        <a href="/tasks" class="action-btn">Add Task</a>
+    </div>
+</section>
+
+<section class="progress-section">
+    <h2>Task Progress</h2>
+
+    <div class="progress-bar">
+        <div class="progress-fill"
+            style="width: <%= progressPercent + '%' %>;">
+        </div>
+    </div>
+
+    <p><%= progressPercent %>% completed</p>
+</section>
