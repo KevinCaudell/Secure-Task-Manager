@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>One Task at a Time — Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-align">
+            <div class="brand">
+                <h1>One Task at a Time</h1>
+                <p class="tagline">Focus. Plan. Done.</p>
+            </div>
+
+            <section class="auth-area">
+                <div class="auth-area-btn">
+                    <a class="auth-btn" href="signup.html">Sign Up</a>
+                </div>
+                <div class="auth-area-btn">
+                    <a class="auth-btn" href="login.html">Log In</a>
+                </div>
+            </section>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <aside class="sidebar" role="navigation" aria-label="Main navigation">
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="tasks.html">Tasks</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <%- body %>
+        </main>
+    </div>
+
+    <footer class="app-footer">
+        <p>© 2026 Kevin Caudell. All rights reserved.</p>
+        <p>Illustration by Freepik</p>
+    </footer>
+</body>
+</html>
