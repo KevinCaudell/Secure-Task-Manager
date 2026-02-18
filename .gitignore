@@ -46,8 +46,8 @@ temp/
 .LSOverride
 
 # Word document
-.doc
-.docx
+*.doc
+*.docx
 
 # database
 database/ERD.mwb
