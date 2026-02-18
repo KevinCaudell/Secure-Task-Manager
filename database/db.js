@@ -4,6 +4,7 @@ const path = require("path");
 const dbPath = path.join(__dirname, "app.db");
 const db = new Database(dbPath);
 
+// User Entity
 db.prepare(`
 CREATE TABLE IF NOT EXISTS USER (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS USER (
 )
 `).run();
 
+// Category Entity
 db.prepare(`
 CREATE TABLE IF NOT EXISTS CATEGORY (
     ID CHAR(3) PRIMARY KEY,
@@ -26,6 +28,7 @@ CREATE TABLE IF NOT EXISTS CATEGORY (
 )
 `).run()
 
+// Tasks Entity
 db.prepare(`
 CREATE TABLE IF NOT EXISTS TASK (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,6 +45,25 @@ CREATE TABLE IF NOT EXISTS TASK (
     FOREIGN KEY(CATEGORY_ID) REFERENCES CATEGORY(ID)
 )
 `).run();
+
+// Default Categories
+const defaultCategories = [
+    { ID: 'SCH', NAME: 'School', COLOR: '#e02b2b' },
+    { ID: 'WRK', NAME: 'Work', COLOR: '#ff9900' },
+    { ID: 'PRS', NAME: 'Personal', COLOR: '#3399ff' },
+    { ID: 'CHO', NAME: 'Chore', COLOR: '#ff66cc' },
+    { ID: 'HLT', NAME: 'Health', COLOR: '#e0dd2b' },
+    { ID: 'OTH', NAME: 'Other', COLOR: '#60666b' }
+];
+
+const insertCategory = db.prepare(`
+    INSERT OR IGNORE INTO CATEGORY (ID, NAME, COLOR, USER_ID, IS_DEFAULT)
+    VALUES (@ID, @NAME, @COLOR, NULL, 1)
+`);
+
+for (const category of defaultCategories){
+    insertCategory.run(category);
+};
 
 
 module.exports = db;
