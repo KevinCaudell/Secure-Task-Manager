@@ -1,6 +1,8 @@
 const Database = require("better-sqlite3");
+const path = require("path");
 
-const db = new Database("app.db");
+const dbPath = path.join(__dirname, "app.db");
+const db = new Database(dbPath);
 
 db.prepare(`
 CREATE TABLE IF NOT EXISTS USER (
@@ -17,7 +19,10 @@ db.prepare(`
 CREATE TABLE IF NOT EXISTS CATEGORY (
     ID CHAR(3) PRIMARY KEY,
     NAME VARCHAR(25) NOT NULL,
-    COLOR VARCHAR(15) NOT NULL
+    COLOR VARCHAR(15) NOT NULL,
+    USER_ID INTEGER,
+    IS_DEFAULT BOOLEAN NOT NULL,
+    FOREIGN KEY (USER_ID) REFERENCES USER(ID)
 )
 `).run()
 
