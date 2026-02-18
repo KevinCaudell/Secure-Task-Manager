@@ -48,3 +48,7 @@ temp/
 # Word document
 .doc
 .docx
+
+# database
+database/ERD.mwb
+*.db
