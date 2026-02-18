@@ -2,8 +2,7 @@
 const express = require('express');
 const path = require('path');
 const layouts = require("express-ejs-layouts");
-const db = require("./db");
-
+const db = require("./database/db.js");
 
 //Initiliaze app
 const app = express();
@@ -15,12 +14,6 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(layouts);
 app.use(express.urlencoded({ extended: true }));
-
-let tasks = [
-    { title: "Finish report", dueDate: "2026-02-18", completed: false },
-    { title: "Submit homework", dueDate: "2026-02-17", completed: false },
-    { title: "Buy groceries", dueDate: "2026-02-16", completed: true }
-];
 
 
 // Home Page
@@ -63,14 +56,6 @@ app.get("/tasks", (req, res) => {
 });
 
 app.post("/tasks/add", (req, res) => {
-    const { title, dueDate } = req.body;
-
-    tasks.push({
-        title,
-        dueDate,
-        completed: false
-    });
-
     res.redirect("/tasks");
 });
 

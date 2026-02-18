@@ -3,6 +3,8 @@ const path = require("path");
 
 const dbPath = path.join(__dirname, "app.db");
 const db = new Database(dbPath);
+db.pragma('foreign_keys = ON');
+
 
 // User Entity
 db.prepare(`
