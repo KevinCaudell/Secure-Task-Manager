@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task — One Task at a Time</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <main class="main-content-signup-login">
+        <div class="back-rectangle">
+            <div class="box">
+                <div class="right">
+                    <h1>Add a New Task</h1>
+
+                    <% if (error) { %>
+                        <div style="color: red; margin-bottom: 10px;">
+                            <%= error %>
+                        </div>
+                    <% } %>
+
+                    <form action="/tasks/add" method="POST">
+                        <input type="text" name="title" placeholder="Task Title" required>
+
+                        <textarea name="description" placeholder="Task Description (optional)" rows="4"></textarea>
+
+                        <label for="dueDate">Due Date:</label>
+                        <input type="date" name="dueDate" id="dueDate">
+
+                        <label for="category">Category:</label>
+                        <select name="categoryId" id="category" required>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat.ID %>"><%= cat.NAME %></option>
+                            <% }) %>
+                        </select>
+
+                        <label for="priority">Priority:</label>
+                        <select name="priority" id="priority" required>
+                            <option value="L">Low</option>
+                            <option value="M">Medium</option>
+                            <option value="H">High</option>
+                        </select>
+
+                        <button type="submit">Add Task</button>
+                    </form>
+
+                    <div class="login-signup">
+                        <a href="/dashboard">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
