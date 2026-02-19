@@ -51,4 +51,5 @@ temp/
 
 # database
 database/ERD.mwb
+database/ERD.mwb.bak
 *.db
