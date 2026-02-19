@@ -10,3 +10,5 @@ function verifyPassword(password, salt, hashedPassword){
     const hashToCompare = crypto.pbkdf2Sync(password, salt, 310000, 32, 'sha256').toString("hex");
     return hashToCompare === hashedPassword;
 };
+
+module.exports = {hashPassword, verifyPassword };
