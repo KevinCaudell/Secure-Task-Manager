@@ -24,10 +24,10 @@
     <h2>Upcoming Tasks</h2>
 
     <ul>
-        <% tasks.forEach(task => { if(!task.completed) { %>
+        <% tasks.forEach(task => { if(task.STATUS === 'P') { %>
             <li>
                 <strong><%= task.title %></strong>
-                — Due: <%= task.dueDate %>
+                — Due: <%= task.dueDateFormatted %>
             </li>
         <% }}); %>
     </ul>
@@ -38,7 +38,7 @@
 
     <div class="action-buttons">
         <a href="/tasks" class="action-btn">View Tasks</a>
-        <a href="/tasks" class="action-btn">Add Task</a>
+        <a href="/tasks/add" class="action-btn">Add Task</a>
     </div>
 </section>
 

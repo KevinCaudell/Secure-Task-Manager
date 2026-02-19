@@ -1,9 +1,11 @@
 // Import libraries
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const layouts = require("express-ejs-layouts");
 const db = require("./database/db.js");
 const { hashPassword, verifyPassword } = require("./utilities/hashing.js");
+const { error } = require('console');
 
 //Initiliaze app
 const app = express();
@@ -15,6 +17,11 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(layouts);
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: "super-secret-key-change-this",
+    resave: false,
+    saveUninitialized: false
+}));
 
 
 // Home Page
@@ -39,10 +46,13 @@ app.post('/login', (req, res) => {
     };
 
     if (verifyPassword(password, user.SALT, user.PASSWORD_HASH)){
+        
+        req.session.userId = user.ID;
+
         db.prepare(`
             UPDATE USER SET LAST_LOGIN = CURRENT_TIMESTAMP WHERE ID = ?
             `).run(user.ID);
-        res.redirect('/dashboard');
+        return res.redirect('/dashboard');
     }else{
         return res.render("login", {layout: false, error: "Invalid email or password", email});
     };
@@ -105,30 +115,81 @@ const { email, username, password, confirm_password } = req.body;
 
 // Dashboard page
 app.get("/dashboard", (req, res) => {
-    const tasks = [
-        { title: "Finish report", dueDate: "2026-02-18", completed: false },
-        { title: "Submit homework", dueDate: "2026-02-17", completed: false },
-        { title: "Buy groceries", dueDate: "2026-02-16", completed: true },
-        { title: "Prepare presentation", dueDate: "2026-02-19", completed: false }
-    ];
+    if (!req.session.userId){
+        return res.redirect('/login');
+    };
+
+    const tasks = db.prepare(`
+        SELECT * 
+        FROM TASK 
+        WHERE USER_ID = ?
+        ORDER BY DUE_DATE ASC
+        `).all(req.session.userId);
 
     const totalTasks = tasks.length;
-    const completedTasks = tasks.filter(t => t.completed).length;
-    const pendingTasks = totalTasks - completedTasks;
-    const overdueTasks = 1;
+    const completedTasks = tasks.filter(t => t.STATUS === 'C').length;
+    const pendingTasks = tasks.filter(t => t.STATUS === 'P').length;
+    const today = new Date().toISOString().split('T')[0];
+    const overdueTasks = tasks.filter(t =>
+        t.STATUS === 'P' &&
+        t.DUE_DATE &&
+        t.DUE_DATE < today
+    ).length;
+    const progressPercent = totalTasks === 0
+        ? 0 
+        : Math.round((completedTasks / totalTasks) * 100);
 
-    const progressPercent = Math.round((completedTasks / totalTasks) * 100);
+    const tasksFormatted = tasks.map(task => ({
+        ...tasks,
+        dueDateFormatted: task.DUE_DATE ? new Date(task.DUE_DATE).toLocaleDateString() : 'No due date'
+    }));
 
-    res.render("dashboard", { tasks, totalTasks, completedTasks, pendingTasks, overdueTasks, progressPercent });
+    res.render('dashboard', {
+        tasks: tasksFormatted, totalTasks, completedTasks,
+        pendingTasks, overdueTasks, progressPercent
+    });
 });
 
 // Tasks page
 app.get("/tasks", (req, res) => {
+    if (!req.session.userId){
+        return res.redirect('/login');
+    };
+
+    const tasks = db.prepare(`
+        SELECT * FROM TASK WHERE USER_ID = ?
+        `).all(req.session.userId);
+
     res.render("tasks", { tasks });
 });
 
+app.get("/tasks/add", (req, res) => {
+    if (!req.session.userId){
+        return res.redirect('/login');
+    };
+
+    const categories = db.prepare(`
+        SELECT *
+        FROM CATEGORY
+        WHERE USER_ID = ? OR IS_DEFAULT = 1
+        `).all(req.session.userId);
+
+    res.render("add-task", { layout: false, categories, error: null });
+});
+
 app.post("/tasks/add", (req, res) => {
-    res.redirect("/tasks");
+    if (!req.session.userId){
+        return res.redirect('/login');
+    };
+
+    const { title, description, dueDate, categoryId, priority } = req.body;
+
+    db.prepare(`
+        INSERT INTO TASK (TITLE, DESCRIPTION, DUE_DATE, CATEGORY_ID, PRIORITY, STATUS, USER_ID)
+        VALUES(?, ?, ?, ? ,?, 'P', ?)
+        `).run(title, description, dueDate || null, categoryId, priority, req.session.userId);
+
+    res.redirect('/dashboard');
 });
 
 
