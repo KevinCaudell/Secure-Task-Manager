@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 
 // Login Page
 app.get("/login", (req, res) => {
-    res.render("login", {layout: false});
+    res.render("login", {layout: false, email: '', error: null});
 });
 
 app.post('/login', (req, res) => {
@@ -35,7 +35,7 @@ app.post('/login', (req, res) => {
         `).get(email);
 
     if (!user) {
-        return res.send('Invalid email or password');
+        return res.render("login", {layout: false, error: "Invalid email or password", email});
     };
 
     if (verifyPassword(password, user.SALT, user.PASSWORD_HASH)){
@@ -44,39 +44,42 @@ app.post('/login', (req, res) => {
             `).run(user.ID);
         res.redirect('/dashboard');
     }else{
-        res.send("Invalid email or password");
+        return res.render("login", {layout: false, error: "Invalid email or password", email});
     };
 });
 
 // Sign up page
 app.get("/signup", (req, res) => {
-    res.render("signup", {layout: false});
+    res.render("signup", {layout: false, email: '', username: '', error: null});
 });
 
 app.post('/signup', (req, res) => {
-const { email, username, password } = req.body;
+const { email, username, password, confirm_password } = req.body;
 
     const forbiddenChars = /[<>\/\\'"`]/;
     const requiredSpecialChars = /[!#$%&*]/;
 
     if (email.length > 60) {
-        return res.send("Email is too long!");
+        return res.render("signup", {layout: false, error: "Email is too long!", email, username});
     };
 
     if (username.length > 25){
-        return res.send('Username is too long!');
+        return res.render("signup", {layout: false, error: "Username is too long!", email, username});
     };
 
     if (password.length < 8){
-        return res.send('Password must be atleast 8 characters!');
+        return res.render("signup", {layout: false, error: "Password must be atleast 8 characters!", email, username});
     };
 
     if (forbiddenChars.test(password)){
-        return res.send('Password contains forbidden characters: < > / \\ \' " `');
+        return res.render("signup", {layout: false, error: 'Password contains forbidden characters: < > / \\ \' " `', email, username});
     };
 
     if (!requiredSpecialChars.test(password)){
-        return res.send('Password must include at least one special character: ! # $ % & *');
+        return res.render("signup", {layout: false, error: "Password must include at least one special character: ! # $ % & *", email, username}); 
+    };
+    if (password !== confirm_password){
+        return res.render("signup", {layout: false, error: "Passwords do not match!", email, username});
     };
 
 
@@ -92,10 +95,10 @@ const { email, username, password } = req.body;
         res.redirect("/login");
     } catch (err) {
         if (err.code === 'SQLITE_CONSTRAINT_UNIQUE'){
-            res.send("That email is already in use!");
+            return res.render("signup", {layout: false, error: "That email is already in use!", email, username});
         }else{
             console.error(err);
-            res.send('An unexpected error occurred!');
+            return res.render("signup", {layout: false, error: "An unexpected error occurred!", email, username});
         };
     };
 });
