@@ -35,7 +35,7 @@ app.post('/login', (req, res) => {
         `).get(email);
 
     if (!user) {
-        return res.send('User not found!');
+        return res.send('Invalid email or password');
     };
 
     if (verifyPassword(password, user.SALT, user.PASSWORD_HASH)){
@@ -44,13 +44,17 @@ app.post('/login', (req, res) => {
             `).run(user.ID);
         res.redirect('/dashboard');
     }else{
-        res.send("Incorrect password");
+        res.send("Invalid email or password");
     };
 });
 
 // Sign up page
 app.get("/signup", (req, res) => {
-    const { email, username, password } = req.body;
+    res.render("signup", {layout: false});
+});
+
+app.post('/signup', (req, res) => {
+const { email, username, password } = req.body;
 
     const forbiddenChars = /[<>\/\\'"`]/;
     const requiredSpecialChars = /[!#$%&*]/;
